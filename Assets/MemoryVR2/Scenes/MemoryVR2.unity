@@ -176,7 +176,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 0ee773d70aaa1774494ce42bbcc860cf, type: 2}
+  - {fileID: 2100000, guid: 70cb0ff2657b79b41aa38454a480f0a5, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -220,6 +220,90 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1001 &687773475
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_RootOrder
+      value: 3
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373896, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373897, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: JoinRoomName
+      value: MemoryVR2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373897, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: maxPlayersPerRoom
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373897, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: RemotePlayerObjectName
+      value: MemoryRemotePlayer
+      objectReference: {fileID: 0}
+    - target: {fileID: 3402538391894373899, guid: 9a6b877f35da7aa4db556157d656d0ff,
+        type: 3}
+      propertyPath: m_Name
+      value: NetworkManager
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 9a6b877f35da7aa4db556157d656d0ff, type: 3}
 --- !u!1001 &726576903
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -291,6 +375,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5883667856760302795, guid: 2af1d2045149fe743b81bc4d1a6f8406,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6179961375502454275, guid: 2af1d2045149fe743b81bc4d1a6f8406,
         type: 3}
