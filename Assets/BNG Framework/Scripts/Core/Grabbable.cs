@@ -478,7 +478,7 @@ namespace BNG {
         }
         protected bool didParentHands = false;
 
-        protected void Awake() {
+        public virtual void Awake() {
             col = GetComponent<Collider>();
             rigid = GetComponent<Rigidbody>();
             input = InputBridge.Instance;
