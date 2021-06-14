@@ -88,6 +88,8 @@ namespace BNG {
         private bool _syncLeftHoldingItem;
         private bool _syncRightHoldingItem;
 
+        GameManager gameManager;
+
         void Start() {
             LeftGrabber = GameObject.Find("LeftController").GetComponentInChildren<Grabber>();
             gitLeft = LeftGrabber.GetComponent<GrabbablesInTrigger>();
@@ -96,6 +98,8 @@ namespace BNG {
             gitRight = RightGrabber.GetComponent<GrabbablesInTrigger>();
 
             requestedGrabbables = new Dictionary<int, double>();
+
+            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
 
         void Update() {
@@ -204,6 +208,12 @@ namespace BNG {
         }
         
         void checkGrabbablesTransfer() {
+
+            if (PhotonNetwork.IsMasterClient && gameManager.Turn == 1)
+                return;
+
+            if (!PhotonNetwork.IsMasterClient && gameManager.Turn == 0)
+                return;
 
             // Cap the request period
             if (PhotonNetwork.Time - lastRequestTime < requestInterval) {

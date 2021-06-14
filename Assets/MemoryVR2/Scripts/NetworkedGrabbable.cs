@@ -95,7 +95,6 @@ namespace BNG {
         }
 
         public override bool IsGrabbable() {
-
             // If base isn't grabbable we can bail early
             if (base.IsGrabbable() == false) {
                 return false;
