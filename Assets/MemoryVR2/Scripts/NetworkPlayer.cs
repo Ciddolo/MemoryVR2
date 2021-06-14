@@ -208,13 +208,6 @@ namespace BNG {
         }
         
         void checkGrabbablesTransfer() {
-
-            if (PhotonNetwork.IsMasterClient && gameManager.Turn == 1)
-                return;
-
-            if (!PhotonNetwork.IsMasterClient && gameManager.Turn == 0)
-                return;
-
             // Cap the request period
             if (PhotonNetwork.Time - lastRequestTime < requestInterval) {
                 return;

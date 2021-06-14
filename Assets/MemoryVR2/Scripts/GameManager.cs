@@ -9,6 +9,7 @@ using BNG;
 public class GameManager : MonoBehaviour, IPunObservable
 {
     public int Turn { get { return turn; } }
+    public int Moves { get { return moves; } }
 
     public Text TextTurn;
     public Text TextMoves;

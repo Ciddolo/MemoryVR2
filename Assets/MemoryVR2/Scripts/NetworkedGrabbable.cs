@@ -25,7 +25,7 @@ namespace BNG {
         void Start() {
             view = GetComponent<PhotonView>();
             rb = GetComponent<Rigidbody>();
-        }        
+        }
 
         public override void Update() {
 
