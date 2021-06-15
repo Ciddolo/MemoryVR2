@@ -9,6 +9,7 @@ using BNG;
 public class NetworkedCard : MonoBehaviour
 {
     public string Number { get { return numberText.text; } set { numberText.text = value; } }
+    public bool IsDone { get { return isDone; } set { isDone = value; } }
 
     public Material FaceDefaultMaterial;
     public Material FaceMaterial;
@@ -20,6 +21,7 @@ public class NetworkedCard : MonoBehaviour
     private MeshRenderer bodyRenderer;
     private MeshRenderer faceRenderer;
 
+    private bool isDone;
     private bool isFlipped;
 
     private Vector3 defaultPosition;
@@ -65,6 +67,7 @@ public class NetworkedCard : MonoBehaviour
         else
             transform.GetChild(1).GetComponent<MeshRenderer>().material = newMaterial;
     }
+
     public void SetFaceMaterial(Material newMaterial)
     {
         if (faceRenderer)
@@ -85,6 +88,7 @@ public class NetworkedCard : MonoBehaviour
     {
         transform.localPosition = defaultPosition;
         transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        isDone = true;
         SetFaceMaterial(FaceMaterial);
     }
 }

@@ -115,6 +115,17 @@ public class GameManager : MonoBehaviour, IPunObservable
             ChangePlayer();
         }
 
+        Transform cardsParent = transform.GetChild(0);
+        for (int i = 0; i < cardsParent.childCount; i++)
+        {
+            NetworkedCard currentCard = cardsParent.GetChild(i).GetComponent<NetworkedCard>();
+
+            if (currentCard.IsDone)
+                currentCard.ResetFlipped();
+            else
+                currentCard.ResetNotFlipped();
+        }
+
         flippedCards.Clear();
         UpdateMoves(moves = 2);
     }
