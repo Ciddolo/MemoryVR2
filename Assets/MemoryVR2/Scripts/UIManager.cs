@@ -4,12 +4,15 @@ using UnityEngine;
 
 public class UIManager : MonoBehaviour
 {
-    public Transform PlayerHead;
-    public float Offset = 1.0f;
+    private Animation turn;
 
-    void Update()
+    private void Start()
     {
-        transform.position = PlayerHead.position + (PlayerHead.forward * Offset);
-        transform.LookAt(PlayerHead, Vector3.up);
+        turn = gameObject.GetComponent<Animation>();
+    }
+
+    public void PlayTurnAnimation()
+    {
+        turn.Play();
     }
 }

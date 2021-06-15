@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour, IPunObservable
     public int Turn { get { return turn; } }
     public int Moves { get { return moves; } }
 
+    public int MatchStarted { get { return matchStarted; } }
+
+    public UIManager uiManager;
+
     public Text TextTurn;
     public Text TextMoves;
     public Text TextScore;
@@ -23,6 +27,9 @@ public class GameManager : MonoBehaviour, IPunObservable
     private float showtime = SHOWTIME;
     private bool isShowTime;
     private bool pairFound;
+
+    private int matchStarted;
+    private int syncMatchStarted;
 
     private int turn;
     private int syncTurn;
@@ -41,6 +48,9 @@ public class GameManager : MonoBehaviour, IPunObservable
 
         flippedCards = new List<NetworkedCard>();
 
+        matchStarted = 0;
+        syncMatchStarted = 0;
+
         turn = 0;
         syncTurn = 0;
 
@@ -57,9 +67,6 @@ public class GameManager : MonoBehaviour, IPunObservable
         Sync();
 
         ShowTime();
-
-        if (Input.GetKeyDown(KeyCode.P) || InputBridge.Instance.AButtonDown) DebugPlus();
-        if (Input.GetKeyDown(KeyCode.O) || InputBridge.Instance.BButtonDown) DebugMinus();
     }
 
     public void UseMove(NetworkedCard newCard)
@@ -105,21 +112,34 @@ public class GameManager : MonoBehaviour, IPunObservable
             flippedCards[0].ResetNotFlipped();
             flippedCards[1].ResetNotFlipped();
 
-            UpdateTurn(turn = turn == 0 ? 1 : 0);
+            ChangePlayer();
         }
 
         flippedCards.Clear();
         UpdateMoves(moves = 2);
     }
 
-    private void DebugPlus()
+    public void ChangePlayer()
     {
-        UpdateTurn(++turn);
-        UpdateMoves(++moves);
-        UpdateScore(++scoreHost, ++scoreGuest);
+        UpdateTurn(turn = turn == 0 ? 1 : 0);
+
+        if ((PhotonNetwork.IsMasterClient && turn == 0) || (!PhotonNetwork.IsMasterClient && turn == 1))
+            uiManager.PlayTurnAnimation();
     }
 
-    private void DebugMinus()
+    public void StartMatch()
+    {
+        if (!PhotonNetwork.IsMasterClient) return;
+
+        ResetStats();
+
+        turn = Random.Range(0.0f, 100.0f) >= 50.0f ? 0 : 1;
+        ChangePlayer();
+
+        matchStarted = 1;
+    }
+
+    private void ResetStats()
     {
         UpdateTurn(turn = 0);
         UpdateMoves(moves = 2);
@@ -133,6 +153,7 @@ public class GameManager : MonoBehaviour, IPunObservable
         UpdateTurn(turn = syncTurn);
         UpdateMoves(moves = syncMoves);
         UpdateScore(scoreHost = syncScoreHost, scoreGuest = syncScoreGuest);
+        matchStarted = syncMatchStarted;
     }
 
     private void UpdateTurn(int currentTurn)
@@ -165,6 +186,7 @@ public class GameManager : MonoBehaviour, IPunObservable
             stream.SendNext(moves);
             stream.SendNext(scoreHost);
             stream.SendNext(scoreGuest);
+            stream.SendNext(matchStarted);
         }
         else
         {
@@ -172,6 +194,7 @@ public class GameManager : MonoBehaviour, IPunObservable
             syncMoves = (int)stream.ReceiveNext();
             syncScoreHost = (int)stream.ReceiveNext();
             syncScoreGuest = (int)stream.ReceiveNext();
+            syncMatchStarted = (int)stream.ReceiveNext();
         }
     }
 }

@@ -10,9 +10,6 @@ namespace BNG {
     /// An object that can be picked up by a Grabber
     /// </summary>
     public class Grabbable : MonoBehaviour {
-
-        GameManager gameManager;
-
         /// <summary>
         /// Is this object currently being held by a Grabber
         /// </summary>
@@ -485,8 +482,6 @@ namespace BNG {
             col = GetComponent<Collider>();
             rigid = GetComponent<Rigidbody>();
             input = InputBridge.Instance;
-
-            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
 
             events = GetComponents<GrabbableEvents>().ToList();
             collisions = new List<Collider>();
@@ -1444,10 +1439,6 @@ namespace BNG {
         }
 
         public virtual void GrabItem(Grabber grabbedBy) {
-            if (PhotonNetwork.IsMasterClient && gameManager.Turn == 1) return;
-            if (!PhotonNetwork.IsMasterClient && gameManager.Turn == 0) return;
-            if (gameManager.Moves <= 0) return;
-
             // Make sure we release this item
             if (BeingHeld && SecondaryGrabBehavior != OtherGrabBehavior.DualGrab) {
                 DropItem(false, true);

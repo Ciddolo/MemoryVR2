@@ -10,6 +10,8 @@ namespace BNG {
         PhotonView view;
         Rigidbody rb;
 
+        GameManager gameManager;
+
         // Used to Lerp our position when we are not the owner
         private Vector3 _syncStartPosition = Vector3.zero;
         private Vector3 _syncEndPosition = Vector3.zero;
@@ -22,9 +24,12 @@ namespace BNG {
         private float _syncDelay = 0f;
         private float _syncTime = 0f;
 
-        void Start() {
+        void Start()
+        {
             view = GetComponent<PhotonView>();
             rb = GetComponent<Rigidbody>();
+
+            gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
         }
 
         public override void Update() {
@@ -92,6 +97,16 @@ namespace BNG {
                 requestingOwnerShip = true;
                 view.TransferOwnership(PhotonNetwork.MasterClient);
             }
+        }
+
+        public override void GrabItem(Grabber grabbedBy)
+        {
+            if (gameManager.MatchStarted == 0) return;
+            if (PhotonNetwork.IsMasterClient && gameManager.Turn == 1) return;
+            if (!PhotonNetwork.IsMasterClient && gameManager.Turn == 0) return;
+            if (gameManager.Moves <= 0) return;
+
+            base.GrabItem(grabbedBy);
         }
 
         public override bool IsGrabbable() {
