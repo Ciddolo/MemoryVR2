@@ -5,7 +5,7 @@ using Photon.Pun;
 
 public class StartMatch : MonoBehaviour
 {
-    GameManager gameManager;
+    private GameManager gameManager;
 
     void Start()
     {
@@ -14,10 +14,7 @@ public class StartMatch : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (!PhotonNetwork.IsMasterClient) return;
-        if (gameManager.MatchStarted != 0) return;
-
-        if (other.tag == "Player")
+        if (other.CompareTag("Player"))
             gameManager.StartMatch();
     }
 }

@@ -11,6 +11,7 @@ namespace BNG {
         Rigidbody rb;
 
         GameManager gameManager;
+        TurnManager turnManager;
 
         // Used to Lerp our position when we are not the owner
         private Vector3 _syncStartPosition = Vector3.zero;
@@ -30,6 +31,7 @@ namespace BNG {
             rb = GetComponent<Rigidbody>();
 
             gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
+            turnManager = GameObject.Find("GameManager").GetComponent<TurnManager>();
         }
 
         public override void Update() {
@@ -101,10 +103,9 @@ namespace BNG {
 
         public override void GrabItem(Grabber grabbedBy)
         {
-            if (gameManager.MatchStarted == 0) return;
-            if (PhotonNetwork.IsMasterClient && gameManager.Turn == 1) return;
-            if (!PhotonNetwork.IsMasterClient && gameManager.Turn == 0) return;
-            if (gameManager.Moves <= 0) return;
+            if (!gameManager.MatchStarted) return;
+            if (!turnManager.IsMyTurn) return;
+            if (!gameManager.HaveMoves) return;
 
             base.GrabItem(grabbedBy);
         }

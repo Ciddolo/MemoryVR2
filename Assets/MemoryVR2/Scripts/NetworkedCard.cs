@@ -16,7 +16,7 @@ public class NetworkedCard : MonoBehaviour
 
     private GameManager gameManager;
     private PhotonView view;
-    private Grabbable grabbable;
+    private NetworkedGrabbable grabbable;
     private Text numberText;
     private MeshRenderer bodyRenderer;
     private MeshRenderer faceRenderer;
@@ -25,6 +25,7 @@ public class NetworkedCard : MonoBehaviour
     private bool isFlipped;
 
     private Vector3 defaultPosition;
+    private Vector3 defaultRotation;
 
     private void Awake()
     {
@@ -40,6 +41,7 @@ public class NetworkedCard : MonoBehaviour
         faceRenderer = transform.GetChild(2).GetComponent<MeshRenderer>();
 
         defaultPosition = transform.localPosition;
+        defaultRotation = transform.localRotation.eulerAngles;
     }
 
     private void Update()
@@ -51,12 +53,12 @@ public class NetworkedCard : MonoBehaviour
     {
         if (isFlipped) return;
 
-        isFlipped = Vector3.Dot(transform.up, Vector3.up) >= 0.0f;
+        isFlipped = Vector3.Dot(transform.up, -Vector3.forward) >= 0.0f;
 
         if (!isFlipped) return;
 
-        numberText.enabled = isFlipped;
         SetFaceMaterial(FaceMaterial);
+        numberText.enabled = true;
         gameManager.UseMove(this);
     }
 
@@ -78,17 +80,28 @@ public class NetworkedCard : MonoBehaviour
 
     public void ResetNotFlipped()
     {
+        grabbable.DropItem(grabbable.GetPrimaryGrabber());
+
         transform.localPosition = defaultPosition;
-        transform.rotation = Quaternion.Euler(0.0f, 0.0f, 180.0f);
+        transform.rotation = Quaternion.Euler(defaultRotation);
+
         isFlipped = false;
+
         SetFaceMaterial(FaceDefaultMaterial);
+        numberText.enabled = false;
     }
 
     public void ResetFlipped()
     {
+        grabbable.DropItem(grabbable.GetPrimaryGrabber());
+
         transform.localPosition = defaultPosition;
-        transform.rotation = Quaternion.Euler(0.0f, 0.0f, 0.0f);
+        transform.rotation = Quaternion.Euler(new Vector3(defaultRotation.x, defaultRotation.y, 0.0f));
+
+        isFlipped = true;
         isDone = true;
+
         SetFaceMaterial(FaceMaterial);
+        numberText.enabled = true;
     }
 }

@@ -56,7 +56,7 @@ public class CardManager : MonoBehaviour
     public int Pairs;
     public bool Spawn;
 
-    [Header("Spawn")]
+    [Header("Place")]
     public bool InitCards;
 
     private void Update()
@@ -82,7 +82,8 @@ public class CardManager : MonoBehaviour
     public void CreateCardGrid()
     {
         float newX = 0.0f;
-        float newZ = -0.2f;
+        float newY = -0.2f * CardPrefab.transform.localScale.x;
+        float newZ = 0.0f;
 
         int rows = 2;
 
@@ -91,21 +92,22 @@ public class CardManager : MonoBehaviour
             if (i % (transform.childCount / rows) == 0)
             {
                 newX = 0.0f;
-                newZ += 0.2f;
+                newY += 0.2f * CardPrefab.transform.localScale.x;
             }
             else
-                newX += 0.1f;
+                newX += 0.1f * CardPrefab.transform.localScale.x;
 
-            transform.GetChild(i).localPosition = new Vector3(newX, 0.0f, newZ);
+            transform.GetChild(i).localPosition = new Vector3(newX, newY, newZ);
+            transform.GetChild(i).localRotation = Quaternion.Euler(270.0f, 0.0f, 180.0f);
         }
     }
 
     public void CenterCards()
     {
         float newX = transform.GetChild(transform.childCount / 2 - 1).localPosition.x / -2;
-        float newZ = transform.GetChild(transform.childCount / 2).localPosition.z / -2;
+        float newY = transform.GetChild(transform.childCount / 2).localPosition.y / -2;
 
-        transform.localPosition = new Vector3(newX, 0.501f, newZ);
+        transform.localPosition = new Vector3(newX, 1.0f + newY, -0.001f);
     }
 
     public void ShuffleCards()

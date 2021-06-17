@@ -8,16 +8,11 @@ using BNG;
 
 public class GameManager : MonoBehaviour, IPunObservable
 {
-    public int Turn { get { return turn; } }
-    public int Moves { get { return moves; } }
+    public bool HaveMoves { get { return moves > 0; } }
+    public bool MatchStarted { get { return matchStarted != 0; } }
 
-    public int MatchStarted { get { return matchStarted; } }
-
-    public UIManager uiManager;
-
-    public Text TextTurn;
-    public Text TextMoves;
-    public Text TextScore;
+    private TurnManager turnManager;
+    private UIManager uiManager;
 
     private PhotonView view;
 
@@ -31,9 +26,6 @@ public class GameManager : MonoBehaviour, IPunObservable
     private int matchStarted;
     private int syncMatchStarted;
 
-    private int turn;
-    private int syncTurn;
-
     private int moves;
     private int syncMoves;
 
@@ -44,6 +36,9 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     void Awake()
     {
+        turnManager = GetComponent<TurnManager>();
+        uiManager = GetComponent<UIManager>();
+
         view = GetComponent<PhotonView>();
 
         flippedCards = new List<NetworkedCard>();
@@ -51,15 +46,12 @@ public class GameManager : MonoBehaviour, IPunObservable
         matchStarted = 0;
         syncMatchStarted = 0;
 
-        turn = 0;
-        syncTurn = 0;
-
         moves = 2;
         syncMoves = 2;
 
-        UpdateTurn(turn);
-        UpdateMoves(moves);
-        UpdateScore(scoreHost, scoreGuest);
+        uiManager.UpdateTurn();
+        uiManager.UpdateMoves(moves);
+        uiManager.UpdateScore(scoreHost, scoreGuest);
     }
 
     void Update()
@@ -71,13 +63,11 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     public void UseMove(NetworkedCard newCard)
     {
-        if (!view.IsMine) return;
-
         if (flippedCards.Contains(newCard)) return;
 
         flippedCards.Add(newCard);
 
-        UpdateMoves(--moves);
+        uiManager.UpdateMoves(--moves);
 
         if (moves > 0) return;
 
@@ -99,10 +89,10 @@ public class GameManager : MonoBehaviour, IPunObservable
 
         if (pairFound)
         {
-            if (turn == 0)
-                UpdateScore(++scoreHost, scoreGuest);
-            else
-                UpdateScore(scoreHost, ++scoreGuest);
+            if (turnManager.IsHostTurn)
+                uiManager.UpdateScore(++scoreHost, scoreGuest);
+            else if (turnManager.IsGuestTurn)
+                uiManager.UpdateScore(scoreHost, ++scoreGuest);
 
             flippedCards[0].ResetFlipped();
             flippedCards[1].ResetFlipped();
@@ -127,73 +117,51 @@ public class GameManager : MonoBehaviour, IPunObservable
         }
 
         flippedCards.Clear();
-        UpdateMoves(moves = 2);
+        uiManager.UpdateMoves(moves = 2);
     }
 
     public void ChangePlayer()
     {
-        UpdateTurn(turn = turn == 0 ? 1 : 0);
+        turnManager.SwitchTurn();
 
-        if ((PhotonNetwork.IsMasterClient && turn == 0) || (!PhotonNetwork.IsMasterClient && turn == 1))
-            uiManager.PlayTurnAnimation();
+        uiManager.UpdateTurn();
+        uiManager.PlayTurnAnimation();
     }
 
     public void StartMatch()
     {
         if (!PhotonNetwork.IsMasterClient) return;
+        if (MatchStarted) return;
 
         ResetStats();
-
-        turn = Random.Range(0.0f, 100.0f) >= 50.0f ? 0 : 1;
-        ChangePlayer();
 
         matchStarted = 1;
     }
 
     private void ResetStats()
     {
-        UpdateTurn(turn = 0);
-        UpdateMoves(moves = 2);
-        UpdateScore(scoreHost = 0, scoreGuest = 0);
+        turnManager.SetRandomTurn();
+
+        uiManager.UpdateScore(scoreHost = 0, scoreGuest = 0);
+        uiManager.UpdateMoves(moves = 2);
+        uiManager.UpdateTurn();
+        uiManager.PlayTurnAnimation();
     }
 
     private void Sync()
     {
         if (view.IsMine) return;
 
-        UpdateTurn(turn = syncTurn);
-        UpdateMoves(moves = syncMoves);
-        UpdateScore(scoreHost = syncScoreHost, scoreGuest = syncScoreGuest);
+        uiManager.UpdateTurn();
+        uiManager.UpdateMoves(moves = syncMoves);
+        uiManager.UpdateScore(scoreHost = syncScoreHost, scoreGuest = syncScoreGuest);
         matchStarted = syncMatchStarted;
-    }
-
-    private void UpdateTurn(int currentTurn)
-    {
-        if (currentTurn == 0)
-            TextTurn.text = "<color=white>TURN</color>\n<color=red>" + currentTurn + "</color>";
-        else
-            TextTurn.text = "<color=white>TURN</color>\n<color=cyan>" + currentTurn + "</color>";
-    }
-
-    private void UpdateMoves(int currentMoves)
-    {
-        TextMoves.text = "<color=white>MOVES\n" + currentMoves + "</color>";
-    }
-
-    private void UpdateScore(int scoreHost, int scoreGuest)
-    {
-        string currentScore = "<color=white>SCORE</color>\n";
-        currentScore += "<color=red> " + scoreHost + "</color>";
-        currentScore += "<color=white> - </color>";
-        currentScore += "<color=cyan> " + scoreGuest + "</color>";
-        TextScore.text = currentScore;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         if (stream.IsWriting && view.IsMine)
         {
-            stream.SendNext(turn);
             stream.SendNext(moves);
             stream.SendNext(scoreHost);
             stream.SendNext(scoreGuest);
@@ -201,7 +169,6 @@ public class GameManager : MonoBehaviour, IPunObservable
         }
         else
         {
-            syncTurn = (int)stream.ReceiveNext();
             syncMoves = (int)stream.ReceiveNext();
             syncScoreHost = (int)stream.ReceiveNext();
             syncScoreGuest = (int)stream.ReceiveNext();
