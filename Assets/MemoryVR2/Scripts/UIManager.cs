@@ -17,7 +17,7 @@ public class UIManager : MonoBehaviour
     private GameManager gameManager;
     private TurnManager turnManager;
 
-    private void Awake()
+    private void Start()
     {
         gameManager = GetComponent<GameManager>();
         turnManager = GetComponent<TurnManager>();

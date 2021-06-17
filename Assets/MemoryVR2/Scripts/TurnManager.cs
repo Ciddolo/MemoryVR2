@@ -12,6 +12,7 @@ public class TurnManager : MonoBehaviour
     private PhotonView view;
 
     private GameManager gameManager;
+    private SoundManager soundManager;
 
     private int turn;
     private int syncTurn;
@@ -19,8 +20,12 @@ public class TurnManager : MonoBehaviour
     private void Awake()
     {
         view = GetComponent<PhotonView>();
+    }
 
+    private void Start()
+    {
         gameManager = GetComponent<GameManager>();
+        soundManager = GetComponent<SoundManager>();
 
         turn = 0;
         syncTurn = 0;

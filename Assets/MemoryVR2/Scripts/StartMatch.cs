@@ -12,6 +12,11 @@ public class StartMatch : MonoBehaviour
         gameManager = GameObject.Find("GameManager").GetComponent<GameManager>();
     }
 
+    private void Update()
+    {
+        transform.Rotate(new Vector3(0.0f, 0.1f, 0.0f));
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (other.CompareTag("Player"))

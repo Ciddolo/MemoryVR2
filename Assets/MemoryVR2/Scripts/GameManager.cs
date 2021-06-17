@@ -13,6 +13,7 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     private TurnManager turnManager;
     private UIManager uiManager;
+    private SoundManager soundManager;
 
     private PhotonView view;
 
@@ -36,10 +37,14 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     void Awake()
     {
+        view = GetComponent<PhotonView>();
+    }
+
+    private void Start()
+    {
         turnManager = GetComponent<TurnManager>();
         uiManager = GetComponent<UIManager>();
-
-        view = GetComponent<PhotonView>();
+        soundManager = GetComponent<SoundManager>();
 
         flippedCards = new List<NetworkedCard>();
 
@@ -69,9 +74,18 @@ public class GameManager : MonoBehaviour, IPunObservable
 
         uiManager.UpdateMoves(--moves);
 
-        if (moves > 0) return;
+        if (moves > 0)
+        {
+            soundManager.PlaySound(SoundClip.Beep);
+            return;
+        }
 
         pairFound = (flippedCards[0].Number == flippedCards[1].Number);
+
+        if (pairFound)
+            soundManager.PlaySound(SoundClip.BeepUp);
+        else
+            soundManager.PlaySound(SoundClip.BeepDown);
 
         isShowTime = true;
     }
@@ -118,7 +132,11 @@ public class GameManager : MonoBehaviour, IPunObservable
         uiManager.UpdateTurn();
 
         if (turnManager.IsMyTurn)
+        {
             uiManager.PlayTurnAnimation();
+
+            soundManager.PlaySound(SoundClip.SwitchTurn);
+        }
     }
 
     public void StartMatch()
@@ -129,12 +147,13 @@ public class GameManager : MonoBehaviour, IPunObservable
         matchStarted = 1;
 
         ResetStats();
+
+        soundManager.PlaySound(SoundClip.BeepUp);
     }
 
     private void ResetStats()
     {
         turnManager.SetRandomTurn();
-        turnManager.SetTurn(0);
 
         uiManager.UpdateScore(scoreHost = 0, scoreGuest = 0);
         uiManager.UpdateMoves(moves = 2);
