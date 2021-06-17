@@ -5,8 +5,8 @@ using Photon.Pun;
 
 public class TurnManager : MonoBehaviour
 {
-    public bool IsHostTurn { get { return PhotonNetwork.IsMasterClient && turn == 0; } }
-    public bool IsGuestTurn { get { return !PhotonNetwork.IsMasterClient && turn == 1; } }
+    public bool IsHostTurn { get { return turn == 0; } }
+    public bool IsGuestTurn { get { return turn == 1; } }
     public bool IsMyTurn { get { return PhotonNetwork.IsMasterClient ? IsHostTurn : IsGuestTurn; } }
 
     private PhotonView view;
@@ -37,9 +37,12 @@ public class TurnManager : MonoBehaviour
         turn = Random.Range(0.0f, 100.0f) >= 50.0f ? 0 : 1;
     }
 
-    public void SwitchTurn()
+    public void SetTurn(int newTurn = -1)
     {
-        turn = turn == 0 ? 1 : 0;
+        if (newTurn < 0 || newTurn > 1)
+            turn = turn == 0 ? 1 : 0;
+        else
+            turn = newTurn;
     }
 
     public void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)

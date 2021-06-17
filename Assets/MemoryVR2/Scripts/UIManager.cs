@@ -55,12 +55,12 @@ public class UIManager : MonoBehaviour
 
     public void UpdateMoves(int currentMoves)
     {
-        textMoves.text = "<color=white>MOVES\n" + currentMoves + "</color>";
+        textMoves.text = "<color=white>MOVES: " + currentMoves + "</color>";
     }
 
     public void UpdateScore(int scoreHost, int scoreGuest)
     {
-        string currentScore = "<color=white>SCORE</color>\n";
+        string currentScore = "<color=white>SCORE: </color>";
         currentScore += "<color=red> " + scoreHost + "</color>";
         currentScore += "<color=white> - </color>";
         currentScore += "<color=cyan> " + scoreGuest + "</color>";

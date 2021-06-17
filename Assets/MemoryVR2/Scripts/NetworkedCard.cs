@@ -78,30 +78,28 @@ public class NetworkedCard : MonoBehaviour
             transform.GetChild(2).GetComponent<MeshRenderer>().material = newMaterial;
     }
 
-    public void ResetNotFlipped()
+    public void GoToBoard()
     {
         grabbable.DropItem(grabbable.GetPrimaryGrabber());
-
         transform.localPosition = defaultPosition;
-        transform.rotation = Quaternion.Euler(defaultRotation);
 
-        isFlipped = false;
+        if (isDone)
+        {
+            transform.rotation = Quaternion.Euler(new Vector3(-90.0f, 0.0f, 0.0f));
 
-        SetFaceMaterial(FaceDefaultMaterial);
-        numberText.enabled = false;
-    }
+            isFlipped = true;
 
-    public void ResetFlipped()
-    {
-        grabbable.DropItem(grabbable.GetPrimaryGrabber());
+            SetFaceMaterial(FaceMaterial);
+            numberText.enabled = true;
+        }
+        else
+        {
+            transform.rotation = Quaternion.Euler(defaultRotation);
 
-        transform.localPosition = defaultPosition;
-        transform.rotation = Quaternion.Euler(new Vector3(defaultRotation.x, defaultRotation.y, 0.0f));
+            isFlipped = false;
 
-        isFlipped = true;
-        isDone = true;
-
-        SetFaceMaterial(FaceMaterial);
-        numberText.enabled = true;
+            SetFaceMaterial(FaceDefaultMaterial);
+            numberText.enabled = false;
+        }
     }
 }

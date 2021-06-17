@@ -94,26 +94,17 @@ public class GameManager : MonoBehaviour, IPunObservable
             else if (turnManager.IsGuestTurn)
                 uiManager.UpdateScore(scoreHost, ++scoreGuest);
 
-            flippedCards[0].ResetFlipped();
-            flippedCards[1].ResetFlipped();
+            flippedCards[0].IsDone = true;
+            flippedCards[1].IsDone = true;
         }
         else
-        {
-            flippedCards[0].ResetNotFlipped();
-            flippedCards[1].ResetNotFlipped();
-
             ChangePlayer();
-        }
 
         Transform cardsParent = transform.GetChild(0);
         for (int i = 0; i < cardsParent.childCount; i++)
         {
             NetworkedCard currentCard = cardsParent.GetChild(i).GetComponent<NetworkedCard>();
-
-            if (currentCard.IsDone)
-                currentCard.ResetFlipped();
-            else
-                currentCard.ResetNotFlipped();
+            currentCard.GoToBoard();
         }
 
         flippedCards.Clear();
@@ -122,10 +113,12 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     public void ChangePlayer()
     {
-        turnManager.SwitchTurn();
+        turnManager.SetTurn();
 
         uiManager.UpdateTurn();
-        uiManager.PlayTurnAnimation();
+
+        if (turnManager.IsMyTurn)
+            uiManager.PlayTurnAnimation();
     }
 
     public void StartMatch()
@@ -133,19 +126,22 @@ public class GameManager : MonoBehaviour, IPunObservable
         if (!PhotonNetwork.IsMasterClient) return;
         if (MatchStarted) return;
 
-        ResetStats();
-
         matchStarted = 1;
+
+        ResetStats();
     }
 
     private void ResetStats()
     {
         turnManager.SetRandomTurn();
+        turnManager.SetTurn(0);
 
         uiManager.UpdateScore(scoreHost = 0, scoreGuest = 0);
         uiManager.UpdateMoves(moves = 2);
         uiManager.UpdateTurn();
-        uiManager.PlayTurnAnimation();
+
+        if (turnManager.IsMyTurn)
+            uiManager.PlayTurnAnimation();
     }
 
     private void Sync()
