@@ -51,12 +51,16 @@ public class CardManager : MonoBehaviour
 
     [Header("Spawn")]
 #if UNITY_EDITOR
-    [RangeEx(11, 21, 2)]
+    [RangeEx(3, 15, 2)]
 #endif
-    public int Pairs;
+    public int Pairs = 3;
     public bool Spawn;
 
     [Header("Place")]
+#if UNITY_EDITOR
+    [Range(2, 4)]
+#endif
+    public int Rows = 3;
     public bool InitCards;
 
     private void Update()
@@ -83,13 +87,11 @@ public class CardManager : MonoBehaviour
     {
         float newX = 0.0f;
         float newY = -0.2f * CardPrefab.transform.localScale.x;
-        float newZ = 0.0f;
-
-        int rows = 2;
+        float newZ = 0.0f;        
 
         for (int i = 0; i < transform.childCount; i++)
         {
-            if (i % (transform.childCount / rows) == 0)
+            if (i % (transform.childCount / Rows) == 0)
             {
                 newX = 0.0f;
                 newY += 0.2f * CardPrefab.transform.localScale.x;
@@ -104,8 +106,8 @@ public class CardManager : MonoBehaviour
 
     public void CenterCards()
     {
-        float newX = transform.GetChild(transform.childCount / 2 - 1).localPosition.x / -2;
-        float newY = transform.GetChild(transform.childCount / 2).localPosition.y / -2;
+        float newX = transform.GetChild(transform.childCount / Rows - 1).localPosition.x / -2;
+        float newY = transform.GetChild(transform.childCount / Rows).localPosition.y / -2;
 
         transform.localPosition = new Vector3(newX, 1.0f + newY, -0.001f);
     }

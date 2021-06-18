@@ -13,20 +13,22 @@ public class UIManager : MonoBehaviour
     private Text textTurn;
     private Text textMoves;
     private Text textScore;
+    private Text textDebug;
 
     private GameManager gameManager;
-    private TurnManager turnManager;
+    //private TurnManager turnManager;
 
     private void Start()
     {
         gameManager = GetComponent<GameManager>();
-        turnManager = GetComponent<TurnManager>();
+        //turnManager = GetComponent<TurnManager>();
 
         startTurnAnimation = UI.GetComponent<Animation>();
 
         textTurn = UI.transform.GetChild(0).GetChild(0).GetComponent<Text>();
         textMoves = UI.transform.GetChild(0).GetChild(1).GetComponent<Text>();
         textScore = UI.transform.GetChild(0).GetChild(2).GetComponent<Text>();
+        textDebug = UI.transform.GetChild(0).GetChild(3).GetComponent<Text>();
     }
 
     public void UpdateTurn()
@@ -39,14 +41,14 @@ public class UIManager : MonoBehaviour
 
         if (PhotonNetwork.IsMasterClient)
         {
-            if (turnManager.IsMyTurn)
+            if (gameManager.IsMyTurn)
                 textTurn.text = "<color=red>YOUR TURN</color>";
             else
                 textTurn.text = "<color=cyan>OPPONENT TURN</color>";
         }
         else
         {
-            if (turnManager.IsMyTurn)
+            if (gameManager.IsMyTurn)
                 textTurn.text = "<color=cyan>YOUR TURN</color>";
             else
                 textTurn.text = "<color=red>OPPONENT TURN</color>";
@@ -65,6 +67,11 @@ public class UIManager : MonoBehaviour
         currentScore += "<color=white> - </color>";
         currentScore += "<color=cyan> " + scoreGuest + "</color>";
         textScore.text = currentScore;
+    }
+
+    public void UpdateDebug(string message)
+    {
+        textDebug.text = "<color=white>" + message + "</color>";
     }
 
     public void PlayTurnAnimation()
