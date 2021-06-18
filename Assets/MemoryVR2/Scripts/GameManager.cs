@@ -23,9 +23,6 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     private List<NetworkedCard> flippedCards;
 
-    private const float SHOWTIME = 2.0f;
-    private float showtime = SHOWTIME;
-    private bool isShowTime;
     private bool pairFound;
 
     private int matchStarted;
@@ -39,7 +36,6 @@ public class GameManager : MonoBehaviour, IPunObservable
     private int scoreGuest;
     private int syncScoreGuest;
 
-    private bool changeTurn;
     private int turn;
     private int syncTurn;
 
@@ -73,14 +69,7 @@ public class GameManager : MonoBehaviour, IPunObservable
 
     private void Update()
     {
-        if (PhotonNetwork.IsMasterClient && changeTurn)
-            ChangePlayer();
-
         Sync();
-
-        ShowTime();
-
-        uiManager.UpdateDebug(turn.ToString());
     }
 
     public void UseMove(NetworkedCard newCard)
@@ -91,12 +80,14 @@ public class GameManager : MonoBehaviour, IPunObservable
 
         uiManager.UpdateMoves(--moves);
 
-        if (moves > 0)
-        {
-            soundManager.PlaySound(SoundClip.Beep);
-            return;
-        }
+        soundManager.PlaySound(SoundClip.Beep);
 
+        if (moves <= 0)
+            StartCoroutine(CheckPair());
+    }
+
+    public IEnumerator CheckPair()
+    {
         pairFound = (flippedCards[0].Number == flippedCards[1].Number);
 
         if (pairFound)
@@ -104,21 +95,11 @@ public class GameManager : MonoBehaviour, IPunObservable
         else
             soundManager.PlaySound(SoundClip.BeepDown);
 
-        isShowTime = true;
-    }
+        yield return new WaitForSeconds(2);
 
-    private void ShowTime()
-    {
-        if (!isShowTime) return;
-
-        showtime -= Time.deltaTime;
-
-        if (showtime > 0.0f) return;
-
-        isShowTime = false;
-        showtime = SHOWTIME;
-
-        if (pairFound)
+        if (!pairFound)
+            ChangePlayer();
+        else
         {
             if (turn == 0)
                 uiManager.UpdateScore(++scoreHost, scoreGuest);
@@ -128,8 +109,6 @@ public class GameManager : MonoBehaviour, IPunObservable
             flippedCards[0].IsDone = true;
             flippedCards[1].IsDone = true;
         }
-        else
-            ChangePlayer();
 
         for (int i = 0; i < transform.GetChild(0).childCount; i++)
             transform.GetChild(0).GetChild(i).GetComponent<NetworkedCard>().GoToBoard();
@@ -149,8 +128,6 @@ public class GameManager : MonoBehaviour, IPunObservable
             uiManager.PlayTurnAnimation();
 
             soundManager.PlaySound(SoundClip.SwitchTurn);
-
-            changeTurn = false;
         }
     }
 
