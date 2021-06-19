@@ -115,7 +115,7 @@ namespace BNG
         {
             if (!gameManager.MatchStarted) return false;
 
-            if (!gameManager.IsMyTurn) return false;
+            if (!turnManager.IsMyTurn) return false;
 
             if (!gameManager.HaveMoves) return false;
 

@@ -16,12 +16,12 @@ public class UIManager : MonoBehaviour
     private Text textDebug;
 
     private GameManager gameManager;
-    //private TurnManager turnManager;
+    private TurnManager turnManager;
 
     private void Start()
     {
         gameManager = GetComponent<GameManager>();
-        //turnManager = GetComponent<TurnManager>();
+        turnManager = GetComponent<TurnManager>();
 
         startTurnAnimation = UI.GetComponent<Animation>();
 
@@ -41,14 +41,14 @@ public class UIManager : MonoBehaviour
 
         if (PhotonNetwork.IsMasterClient)
         {
-            if (gameManager.IsMyTurn)
+            if (turnManager.IsMyTurn)
                 textTurn.text = "<color=red>YOUR TURN</color>";
             else
                 textTurn.text = "<color=cyan>OPPONENT TURN</color>";
         }
         else
         {
-            if (gameManager.IsMyTurn)
+            if (turnManager.IsMyTurn)
                 textTurn.text = "<color=cyan>YOUR TURN</color>";
             else
                 textTurn.text = "<color=red>OPPONENT TURN</color>";
